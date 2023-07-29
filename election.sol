@@ -1,96 +1,110 @@
-// SPDX-License-Identifier: GPL-3.0
-pragma solidity 0.8.18;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
 contract Election {
     struct Voter {
+        bool registered; // if true, this voter is eligible to vote
         bool voted; // if true, this voter already voted
-        bool registered;
+        uint256[3] candidateVotes; // Stores candidate IDs with their preference points (5, 3, or 1)
     }
 
     struct Candidate {
         string name; // short name (up to 32 bytes)
-        uint256 score; // total score
-        address id;
+        uint256 totalVotes; // total number of votes received
     }
 
     address public leader;
-
-    // This declares a state variable that
-    // maps a `Voter` to each possible address.
     mapping(address => Voter) public voters;
-
     Candidate[] public candidates;
-    string[] names;
 
-    constructor() {
+    constructor(string[] memory _candidateNames) {
         leader = msg.sender;
+        voters[leader].registered = true;
+
+        // For each provided candidate name, create
+        // a new `Candidate` and add it to the end
+        // of the `candidates` array.
+        for (uint256 i = 0; i < _candidateNames.length; i++) {
+            // `Candidate({...})` creates a temporary
+            // Candidate object and `candidates.push(...)`
+            // appends it to the end of `candidates`.
+            candidates.push(Candidate({name: _candidateNames[i], totalVotes: 0}));
+        }
     }
-// register the voter
-    function regVoter() external
-    {
-         Voter storage voter = voters[msg.sender];
-         require(voter.registered == false, "Voter is already registered");
-         voter.registered = true;
+
+    function registerVoter(address voter) external {
+        require(
+            msg.sender == leader,
+            "Only the election leader can grant voting rights."
+        );
+        require(
+            !voters[voter].voted,
+            "The voter has already voted and cannot be registered."
+        );
+        require(
+            !voters[voter].registered,
+            "Voter is already registered."
+        );
+
+        // Register a voter with the given address by setting
+        // the `registered` field of the corresponding Voter to true.
+        voters[voter].registered = true;
     }
-// register the candidate
-    function regCandidate(string memory name) external {
-        address ID = msg.sender;
-        uint256 flag =0;
-        for(uint256 i =0; i< candidates.length;i++)
-        {
-            if(candidates[i].id == ID)
-            {
-                flag =1;
-                break;
+
+    /// Give your vote to 3 candidates.
+    /// The candidate at index `_candidate1` gets 5 points,
+    /// `_candidate2` gets 3 points, and `_candidate3` gets 1 point.
+    function castVote(uint256 _candidate1, uint256 _candidate2, uint256 _candidate3) external {
+        Voter storage voter = voters[msg.sender];
+        require(voter.registered, "Voter is not registered.");
+        require(!voter.voted, "Already voted.");
+        require(
+            _candidate1 != _candidate2 &&
+            _candidate1 != _candidate3 &&
+            _candidate2 != _candidate3,
+            "Candidates must be distinct."
+        );
+
+        // Assign 5, 3, and 1 points to the selected candidates.
+        voter.voted = true;
+        voter.candidateVotes[0] = _candidate1;
+        voter.candidateVotes[1] = _candidate2;
+        voter.candidateVotes[2] = _candidate3;
+
+        // Increment the vote count for the selected candidates.
+        candidates[_candidate1].totalVotes += 5;
+        candidates[_candidate2].totalVotes += 3;
+        candidates[_candidate3].totalVotes += 1;
+    }
+
+    // Determine the winning candidate.
+    function winningCandidate() public view returns (uint256 winningCandidate_) {
+        require(candidates.length > 0, "No candidates in the election.");
+        uint256 maxVotes = 0;
+        uint256 winningIndex;
+
+        for (uint256 i = 0; i < candidates.length; i++) {
+            if (candidates[i].totalVotes > maxVotes) {
+                maxVotes = candidates[i].totalVotes;
+                winningIndex = i;
             }
         }
-        if(flag==0)
-        {
-        candidates.push(Candidate({name: name, score: 0, id:msg.sender}));
-        names.push(name);
-        }
-    }
-// This function checks if the voter is registered or not
-    function isVoter() public view returns(bool isVoter_) {
-        if(voters[msg.sender].registered == true)
-        return true;
-        else 
-        return false;
-    }
-    function castVote(uint256[3] memory pref) external {
-        Voter storage voter = voters[msg.sender];
-        require(voter.registered == true,"Voter is not registered");
-        require(!voter.voted, "Already voted.");
-        candidates[pref[0]-1].score += 5;
-        candidates[pref[1]-1].score += 3;
-        candidates[pref[2]-1].score += 1;
-        voters[msg.sender].voted = true;
+
+    return winningIndex;
     }
 
-    function showCandidates() public view returns (string[] memory name_) {
-        return names;
-    }
-        // Determine the winning candidate.
-    function winningCandidate() public view returns (uint256 winner_)
-    {
-        uint256 max = 0;
-        for(uint256 i =1; i< candidates.length; i++)
-        {
-           if(candidates[i].score> candidates[max].score)
-                 max = i;
+    function winningCandidateName() external view returns (string memory winnerName_) {
+    uint256 winningIndex = winningCandidate();
+
+    // Check if any votes have been cast
+    for (uint256 i = 0; i < candidates.length; i++) {
+        if (candidates[i].totalVotes > 0) {
+        return candidates[winningIndex].name;
         }
-         require(!(candidates[max].score == 0), "No votes have been casted.");
-         return max;
-        // Return the index of the winner in `winningCandidate_`
-        // Error and revert if no votes have been cast yet.
     }
 
-    // Calls winningCandidate() function to get the index
-    // of the winner and then returns the name of the winner
-    function winningCandidateName() external view returns (string memory winnerName_)
-    {
-        require(msg.sender == leader, "Only leader can access the name of the winner");
-        uint256 index = winningCandidate();
-        return candidates[index].name;
+    revert("No votes have been cast.");
     }
+
+
 }

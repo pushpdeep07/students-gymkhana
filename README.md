@@ -12,7 +12,7 @@ In it when we click the Connect to metamask then it gives pop up for connecting 
 
 and then next window will be open.
 
-![Screenshot (245) A](https://github.com/pushpdeep07/students-gymkhana/assets/130915214/7dcda9c7-2013-4e47-ad60-dab899e6b5ea)
+![image](https://github.com/pushpdeep07/students-gymkhana/assets/130915214/48eabbe2-9a9f-4d28-8398-a618b3301afd)
 
 here we will cast our vote to each candidate as per our preference and then click on submit so our contract will be deployed and scores will be updated.
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+   
+    <title>Welcome to Students's Gymkhana Election</title>
+    <link rel="stylesheet" href="style.css">
+   
+    
+</head>
+<body style="background-color:aquamarine;">
+    <div id="connect">
+        <h1>Welcome to Student's Gymkhana Election</h1>
+        <h2> Let's vote!!</h2>
+        <button id="Button">Connect to MetaMask</button>
+    </div>
+
+    <div id="election"  style="display: none;">
+        <h1>Gymkhana Elections</h1>
+        <table id="candidatesTable">
+            <tr>
+                <th>Sr.No</th>
+                <th>Candidate Name</th>
+                <th>Score</th>
+            </tr>
+            <tr>
+                <th>1.</th>
+                <th>Salman Khan</th>
+                <th>0</th>
+            </tr>
+            <tr>
+                <th>2.</th>
+                <th>Akshay Kumar</th>
+                <th>0</th>
+            </tr>
+            <tr>
+                <th>3.</th>
+                <th>Shah Rukh Khan</th>
+                <th>0</th>
+            </tr>
+            <tr>
+                <th>4</th>
+                <th>Hritik Roshan</th>
+                <th>0</th>
+            </tr>
+        </table>
+
+        <form id="candidates">
+            <label for="candidate1">1st Preference:</label>
+            <input type="number" id="can1" required>
+
+            <label for="candidate2">2nd Preference:</label>
+            <input type="number" id="can2" required>
+
+            <label for="candidate3">3rd Preference:</label>
+            <input type="number" id="can3" required>
+    
+        </form>
+
+        <button type="submit" id="votebutton" >Submit</button>
+
+        <div id="votingdone">
+            <p>Thanks for Voting!</p>
+        </div>
+
+        <table id="candidates_table">
+        </table>
+
+        <button id="result">Update Scores</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

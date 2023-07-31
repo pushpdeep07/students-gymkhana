@@ -6,7 +6,7 @@ In it when we click the Connect to metamask then it gives pop up for connecting 
 ![Screenshot (246)](https://github.com/pushpdeep07/students-gymkhana/assets/130915214/5dedcf78-753e-4604-b891-0a48d5ddb243)
 and then next window will be open.
 ![Screenshot (245) A](https://github.com/pushpdeep07/students-gymkhana/assets/130915214/7dcda9c7-2013-4e47-ad60-dab899e6b5ea)
-here we will cast our vote to each candidate as per our preference and then click on submit so our contract will be deployed and scores will be updated
+here we will cast our vote to each candidate as per our preference and then click on submit so our contract will be deployed and scores will be updated.
 
 
 
